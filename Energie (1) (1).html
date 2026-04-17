@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Management Énergétique — ISO 50001</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0a0f1e;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --light: #94a3b8;
+    --green: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 64px;
+    background: rgba(10,15,30,0.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+    .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent2); letter-spacing: 0.04em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-back { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; padding: 0.4rem 1rem; border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; transition: all 0.2s; }
+  .nav-back:hover { background: rgba(59,130,246,0.08); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 8rem 2.5rem 5rem; text-align: center;
+    background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(16,185,129,0.07) 0%, transparent 70%);
+  }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 1.5rem; }
+  .hero h1 span { color: var(--accent2); }
+  .hero p { font-size: 1rem; color: var(--light); max-width: 520px; margin: 0 auto 3rem; font-weight: 300; }
+
+  .hero-img {
+    width: 100%; max-width: 720px; margin: 0 auto 3rem;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .hero-img img { width: 100%; height: 320px; object-fit: cover; display: block; opacity: 0.85; }
+  .hero-img-caption { padding: 0.75rem 1.2rem; text-align: left; font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
+  .hero-img-caption span { color: var(--accent2); font-weight: 500; }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); margin: 0; }
+
+  section { max-width: 1100px; margin: 0 auto; padding: 5rem 2.5rem; }
+
+  .section-label { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 2.5rem; }
+  .section-title span { color: var(--accent2); }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem; }
+  .stat { text-align: center; padding: 1.5rem 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent2); line-height: 1; }
+  .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.4rem; }
+
+  /* CONCEPT CARDS */
+  .concepts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .concept-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .concept-card:hover { border-color: rgba(6,182,212,0.3); transform: translateY(-4px); }
+  .concept-img { width: 100%; height: 180px; object-fit: cover; display: block; opacity: 0.8; }
+  .concept-body { padding: 1.5rem; }
+  .concept-tag { display: inline-block; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); color: var(--accent2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.8rem; }
+  .concept-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+  .concept-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.2rem; }
+
+  /* LINKS */
+  .google-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.75rem; font-weight: 500; color: var(--light);
+    text-decoration: none; padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .google-link:hover { border-color: rgba(59,130,246,0.4); color: var(--accent); }
+  .google-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  .youtube-link {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-size: 0.75rem; font-weight: 600; color: #fff;
+    text-decoration: none; padding: 0.4rem 0.85rem;
+    background: rgba(220,38,38,0.13);
+    border: 1px solid rgba(220,38,38,0.35); border-radius: 6px;
+    transition: all 0.22s;
+  }
+  .youtube-link:hover { background: rgba(220,38,38,0.28); border-color: rgba(220,38,38,0.7); box-shadow: 0 0 10px rgba(220,38,38,0.15); }
+  .youtube-link .yt-icon { width: 14px; height: 14px; flex-shrink: 0; fill: #ff4444; }
+
+  .card-links { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+  .yt-section-btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 0.8rem; font-weight: 600; color: #fff;
+    text-decoration: none; padding: 0.55rem 1.1rem;
+    background: rgba(220,38,38,0.13);
+    border: 1px solid rgba(220,38,38,0.35); border-radius: 8px;
+    transition: all 0.22s;
+  }
+  .yt-section-btn:hover { background: rgba(220,38,38,0.28); border-color: rgba(220,38,38,0.7); box-shadow: 0 0 14px rgba(220,38,38,0.18); }
+  .yt-section-btn .yt-icon { width: 15px; height: 15px; flex-shrink: 0; fill: #ff4444; }
+
+  /* SPLIT */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .split-img { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+  .split-img img { width: 100%; height: 280px; object-fit: cover; display: block; opacity: 0.85; }
+  .split-content p { font-size: 0.9rem; color: var(--light); line-height: 1.8; margin-bottom: 1.5rem; }
+
+  /* PDCA CYCLE */
+  .pdca-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  .pdca-card { padding: 1.6rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; position: relative; overflow: hidden; }
+  .pdca-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .pdca-plan::before { background: var(--accent2); }
+  .pdca-do::before { background: var(--green); }
+  .pdca-check::before { background: #f59e0b; }
+  .pdca-act::before { background: #8b5cf6; }
+  .pdca-letter { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; opacity: 0.12; position: absolute; right: 1rem; top: 0.5rem; line-height: 1; }
+  .pdca-plan .pdca-letter { color: var(--accent2); }
+  .pdca-do .pdca-letter { color: var(--green); }
+  .pdca-check .pdca-letter { color: #f59e0b; }
+  .pdca-act .pdca-letter { color: #8b5cf6; }
+  .pdca-tag { font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .pdca-plan .pdca-tag { color: var(--accent2); }
+  .pdca-do .pdca-tag { color: var(--green); }
+  .pdca-check .pdca-tag { color: #f59e0b; }
+  .pdca-act .pdca-tag { color: #8b5cf6; }
+  .pdca-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .pdca-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+  /* GLOSSARY */
+  .glossary { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .gloss-item { padding: 1.4rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .gloss-term { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+  .gloss-def { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.8rem; }
+  .gloss-links { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+
+  .yt-gloss-link {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.68rem; font-weight: 600; color: #fca5a5;
+    text-decoration: none; padding: 0.2rem 0.55rem;
+    background: rgba(220,38,38,0.1);
+    border: 1px solid rgba(220,38,38,0.25); border-radius: 4px;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .yt-gloss-link:hover { background: rgba(220,38,38,0.22); border-color: rgba(220,38,38,0.5); }
+  .yt-gloss-link .yt-icon { width: 11px; height: 11px; fill: #f87171; }
+
+  footer { text-align: center; padding: 3rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+  footer strong { color: var(--accent2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .split { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .glossary { grid-template-columns: 1fr; }
+    .concepts { grid-template-columns: 1fr; }
+    .pdca-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">
+    <span></span>
+    Maintenance 4.0
+  </div>
+  <a href="page.html" class="nav-back">← Portfolio</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="max-width:800px;width:100%">
+    <p style="font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem;">Industrie 4.0</p>
+    <h1>Management<br><span>Énergétique</span></h1>
+    <p>Optimiser la consommation. Réduire les coûts. Améliorer durablement la performance industrielle avec ISO 50001.</p>
+
+    <div class="hero-img">
+      <img src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80" alt="Centrale d'énergie industrielle">
+      <div class="hero-img-caption">
+        <span>↑</span> Gestion intelligente de l'énergie dans les environnements industriels modernes
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val">−30%</div><div class="stat-lbl">Consommation</div></div>
+      <div class="stat"><div class="stat-val">2011</div><div class="stat-lbl">Création ISO 50001</div></div>
+      <div class="stat"><div class="stat-val">−40%</div><div class="stat-lbl">Coûts énergétiques</div></div>
+      <div class="stat"><div class="stat-val">CO₂</div><div class="stat-lbl">Empreinte réduite</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONCEPTS CLÉS -->
+<section id="concepts">
+  <div class="section-label">Concepts fondamentaux</div>
+  <h2 class="section-title">Les piliers du <span>Management Énergétique</span></h2>
+
+  <div class="concepts">
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80" alt="Norme ISO 50001 management">
+      <div class="concept-body">
+        <div class="concept-tag">Norme internationale</div>
+        <div class="concept-title">ISO 50001 — Définition</div>
+        <div class="concept-desc">Norme internationale qui fournit un cadre structuré pour améliorer continuellement la performance énergétique, réduire la consommation et l'impact environnemental d'une organisation.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=ISO+50001+management+energetique+definition+norme" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=ISO+50001+energy+management+system+explained+tutorial" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1498084393753-b411b2d26b34?w=600&q=80" alt="Indicateurs performance énergétique EnPI">
+      <div class="concept-body">
+        <div class="concept-tag">Performance</div>
+        <div class="concept-title">EnPI — Indicateurs Énergétiques</div>
+        <div class="concept-desc">Les Energy Performance Indicators (EnPI) sont des métriques qui permettent de mesurer, surveiller et comparer la consommation énergétique dans le temps. Ex : kWh / unité produite.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=EnPI+indicateur+performance+energetique+ISO+50001" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=energy+performance+indicator+EnPI+ISO+50001+measurement" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=80" alt="Audit énergétique industriel">
+      <div class="concept-body">
+        <div class="concept-tag">Audit</div>
+        <div class="concept-title">Audit Énergétique</div>
+        <div class="concept-desc">Analyse systématique des consommations d'énergie d'une installation pour identifier les postes les plus énergivores et les opportunités d'amélioration. Étape obligatoire avant toute certification.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=audit+energetique+industriel+methode+ISO+50002" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=audit+energetique+industriel+methode+ISO+50002+processus" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="Monitoring consommation énergie temps réel">
+      <div class="concept-body">
+        <div class="concept-tag">Surveillance</div>
+        <div class="concept-title">Monitoring Énergétique Temps Réel</div>
+        <div class="concept-desc">Système de mesure et d'acquisition continue des consommations d'énergie (électricité, gaz, eau, vapeur) via des compteurs intelligents et capteurs IoT connectés à un tableau de bord centralisé.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=monitoring+energetique+temps+reel+compteurs+intelligents+IoT" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=energy+monitoring+real+time+smart+meters+IoT+industry" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=600&q=80" alt="Énergies renouvelables solaire industrie">
+      <div class="concept-body">
+        <div class="concept-tag">Durabilité</div>
+        <div class="concept-title">Efficacité & Énergies Renouvelables</div>
+        <div class="concept-desc">Intégration d'énergies renouvelables (solaire, éolien) et amélioration de l'efficacité des procédés industriels pour atteindre les objectifs de décarbonation et réduire la dépendance aux énergies fossiles.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=efficacite+energetique+industrie+energies+renouvelables+integration" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=industrial+energy+efficiency+renewable+integration+decarbonization" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80" alt="Objectifs réglementaires conformité énergie">
+      <div class="concept-body">
+        <div class="concept-tag">Conformité</div>
+        <div class="concept-title">Conformité Réglementaire</div>
+        <div class="concept-desc">ISO 50001 aide les organisations à identifier et respecter les obligations légales liées à l'énergie (directives européennes EED, ITRE, réglementations nationales) et à anticiper les évolutions réglementaires.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=conformite+reglementaire+energie+directive+EED+ISO+50001" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=ISO+50001+compliance+regulatory+energy+directive+certification" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CYCLE PDCA -->
+<section id="pdca">
+  <div class="section-label">Structure de la norme</div>
+  <h2 class="section-title">Le Cycle <span>PDCA</span> d'ISO 50001</h2>
+
+  <div class="pdca-grid">
+
+    <div class="pdca-card pdca-plan">
+      <div class="pdca-letter">P</div>
+      <div class="pdca-tag">Plan — Planifier</div>
+      <div class="pdca-title">Analyse énergétique & objectifs</div>
+      <div class="pdca-desc">Réaliser un audit énergétique, définir la ligne de base (EnB), établir les indicateurs de performance (EnPI), fixer les objectifs et cibles d'amélioration, identifier les Usages Énergétiques Significatifs (UES).</div>
+    </div>
+
+    <div class="pdca-card pdca-do">
+      <div class="pdca-letter">D</div>
+      <div class="pdca-tag">Do — Réaliser</div>
+      <div class="pdca-title">Mise en œuvre des actions</div>
+      <div class="pdca-desc">Déployer les plans d'action, former le personnel, installer les compteurs et capteurs, mettre en place les procédures opérationnelles et les bonnes pratiques énergétiques au quotidien.</div>
+    </div>
+
+    <div class="pdca-card pdca-check">
+      <div class="pdca-letter">C</div>
+      <div class="pdca-tag">Check — Vérifier</div>
+      <div class="pdca-title">Mesure & surveillance des EnPI</div>
+      <div class="pdca-desc">Mesurer et analyser les consommations, comparer aux EnPI et à la ligne de base, réaliser des audits internes, évaluer la conformité réglementaire et les progrès vers les objectifs fixés.</div>
+    </div>
+
+    <div class="pdca-card pdca-act">
+      <div class="pdca-letter">A</div>
+      <div class="pdca-tag">Act — Agir</div>
+      <div class="pdca-title">Amélioration continue</div>
+      <div class="pdca-desc">Analyser les écarts et non-conformités, prendre des actions correctives, réviser les objectifs, mettre à jour la politique énergétique et recommencer le cycle pour une amélioration permanente.</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:2rem;" class="card-links">
+    <a class="google-link" href="https://www.google.com/search?q=PDCA+cycle+ISO+50001+amélioration+continue+energie" target="_blank">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+      En savoir plus — Cycle PDCA ISO 50001
+    </a>
+    <a class="yt-section-btn" href="https://www.youtube.com/results?search_query=PDCA+cycle+ISO+50001+energy+management+Plan+Do+Check+Act" target="_blank">
+      <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      Voir sur YouTube
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INDUSTRIE 4.0 -->
+<section id="industrie40">
+  <div class="split">
+    <div class="split-img">
+      <img src="C:\Users\BAZINFO\Downloads\images (1).jfif" alt="Industrie 4.0 énergie intelligente capteurs IoT">
+    </div>
+    <div class="split-content">
+      <div class="section-label">Rôle stratégique</div>
+      <h2 class="section-title" style="margin-bottom:1rem;">ISO 50001 dans <span>l'Industrie 4.0</span></h2>
+      <p>L'Industrie 4.0 démultiplie l'efficacité d'ISO 50001 grâce aux capteurs intelligents qui mesurent chaque flux d'énergie en temps réel, à l'analyse big data qui détecte les gaspillages invisibles, et à la maintenance prédictive qui évite les surconsommations dues aux équipements dégradés.</p>
+      <p style="margin-bottom:1rem;">L'optimisation intelligente des procédés (via IA et Machine Learning) permet d'ajuster dynamiquement les paramètres de production pour minimiser la consommation à chaque instant, sans sacrifier la qualité ni la productivité.</p>
+      <div class="card-links">
+        <a class="google-link" href="https://www.google.com/search?q=ISO+50001+industrie+4.0+IoT+optimisation+energetique+intelligente" target="_blank">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+          En savoir plus — Énergie & Industrie 4.0
+        </a>
+        <a class="yt-section-btn" href="https://www.youtube.com/results?search_query=ISO+50001+industry+4.0+IoT+smart+energy+management+AI+optimization" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          Voir sur YouTube
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GLOSSAIRE -->
+<section id="glossaire">
+  <div class="section-label">Vocabulaire essentiel</div>
+  <h2 class="section-title">Glossaire <span>ISO 50001</span></h2>
+
+  <div class="glossary">
+
+    <div class="gloss-item">
+      <div class="gloss-term">EnMS — Energy Management System</div>
+      <div class="gloss-def">Système de Management de l'Énergie. Ensemble de procédures, processus et données permettant de gérer et améliorer la performance énergétique d'une organisation de façon structurée et continue.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=EnMS+Energy+Management+System+ISO+50001+definition" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=energy+management+system+EnMS+ISO+50001+implementation" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">EnPI — Energy Performance Indicator</div>
+      <div class="gloss-def">Indicateur de Performance Énergétique. Valeur quantitative mesurant la consommation d'énergie relative à une activité. Ex : kWh/tonne produite, kWh/m². Permet de comparer les performances dans le temps.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=EnPI+energy+performance+indicator+calcul+exemple+ISO+50001" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=EnPI+energy+performance+indicator+calculation+ISO+50001" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">EnB — Energy Baseline (Ligne de base)</div>
+      <div class="gloss-def">Référence énergétique établie sur une période donnée servant de point de comparaison pour mesurer les progrès réalisés. Toute amélioration est mesurée par rapport à cette ligne de base.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=EnB+energy+baseline+ligne+de+base+ISO+50001+definition" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=energy+baseline+EnB+ISO+50001+measurement+verification" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">UES — Usages Énergétiques Significatifs</div>
+      <div class="gloss-def">Postes de consommation d'énergie qui représentent une part importante de la consommation totale ou qui offrent un potentiel d'amélioration substantiel. Ce sont les priorités d'action du plan énergétique.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=UES+usages+energetiques+significatifs+ISO+50001+identification" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=significant+energy+use+SEU+ISO+50001+identification+tutorial" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">IPMVP — Protocole de Mesure & Vérification</div>
+      <div class="gloss-def">International Performance Measurement and Verification Protocol. Standard mondial pour quantifier les économies d'énergie réalisées après la mise en place d'actions d'amélioration. Utilisé pour valider les gains énergétiques.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=IPMVP+protocole+mesure+verification+economies+energie" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=IPMVP+measurement+verification+energy+savings+protocol" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">SCADA — Supervision Industrielle</div>
+      <div class="gloss-def">Supervisory Control and Data Acquisition. Système de supervision qui collecte les données des capteurs de terrain (électricité, eau, gaz, vapeur) pour les afficher et les archiver en temps réel, intégré au système de management énergétique.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=SCADA+supervision+industrielle+energie+monitoring+definition" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=SCADA+energy+monitoring+industrial+supervision+explained" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">ISO 50001 : 2018 — Révision</div>
+      <div class="gloss-def">Version révisée de la norme, alignée sur la structure HLS (High Level Structure) commune à ISO 9001 (qualité) et ISO 14001 (environnement), facilitant leur intégration dans un système de management unifié.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=ISO+50001+2018+revision+HLS+changements+ISO+9001+14001" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=ISO+50001+2018+revision+changes+HLS+integration+ISO+9001" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">Analyse Énergétique (Energy Review)</div>
+      <div class="gloss-def">Étude approfondie des consommations d'énergie d'une organisation : identification des sources d'énergie, analyse des usages et des consommateurs, évaluation des performances passées et présentes, et identification des opportunités d'amélioration.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=analyse+energetique+energy+review+ISO+50001+methode" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=energy+review+analysis+ISO+50001+how+to+conduct" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <strong>Management Énergétique — ISO 50001</strong> &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; <a href="page.html" style="color:var(--muted);text-decoration:none;">← Retour au portfolio</a>
+</footer>
+
+</body>
+</html>

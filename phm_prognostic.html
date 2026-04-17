@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pronostic & PHM — Prognostics and Health Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0a0f1e;
+    --surface: #111827;
+    --card: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --light: #94a3b8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 64px;
+    background: rgba(10,15,30,0.9); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent2); letter-spacing: 0.04em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+  .nav-links a { color: var(--muted); font-size: 0.8rem; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-back { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; padding: 0.4rem 1rem; border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; transition: all 0.2s; }
+  .nav-back:hover { background: rgba(59,130,246,0.08); }
+
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 8rem 2.5rem 5rem; text-align: center;
+    background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(6,182,212,0.08) 0%, transparent 70%);
+  }
+  .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; margin-bottom: 1.5rem; }
+  .hero h1 span { color: var(--accent2); }
+  .hero p { font-size: 1rem; color: var(--light); max-width: 480px; margin: 0 auto 3rem; font-weight: 300; }
+  .hero-img {
+    width: 100%; max-width: 720px; margin: 0 auto 3rem;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .hero-img img { width: 100%; height: 320px; object-fit: cover; display: block; opacity: 0.85; }
+  .hero-img-caption { padding: 0.75rem 1.2rem; text-align: left; font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
+  .hero-img-caption span { color: var(--accent2); font-weight: 500; }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); margin: 0; }
+
+  section { max-width: 1100px; margin: 0 auto; padding: 5rem 2.5rem; }
+
+  .section-label { font-family: 'Syne', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent2); margin-bottom: 1rem; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 2.5rem; }
+  .section-title span { color: var(--accent2); }
+
+  .concepts { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+  .concept-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .concept-card:hover { border-color: rgba(6,182,212,0.3); transform: translateY(-4px); }
+
+  .concept-img { width: 100%; height: 180px; object-fit: cover; display: block; opacity: 0.8; }
+
+  .concept-body { padding: 1.5rem; }
+  .concept-tag { display: inline-block; background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); color: var(--accent2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 0.8rem; }
+  .concept-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text); }
+  .concept-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; margin-bottom: 1.2rem; }
+
+  .google-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.75rem; font-weight: 500; color: var(--light);
+    text-decoration: none; padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .google-link:hover { border-color: rgba(59,130,246,0.4); color: var(--accent); }
+  .google-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  .youtube-link {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-size: 0.75rem; font-weight: 600; color: #fff;
+    text-decoration: none; padding: 0.4rem 0.85rem;
+    background: rgba(220,38,38,0.13);
+    border: 1px solid rgba(220,38,38,0.35); border-radius: 6px;
+    transition: all 0.22s;
+  }
+  .youtube-link:hover { background: rgba(220,38,38,0.28); border-color: rgba(220,38,38,0.7); box-shadow: 0 0 10px rgba(220,38,38,0.15); }
+  .youtube-link .yt-icon { width: 14px; height: 14px; flex-shrink: 0; fill: #ff4444; }
+
+  .card-links { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+  .yt-section-btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 0.8rem; font-weight: 600; color: #fff;
+    text-decoration: none; padding: 0.55rem 1.1rem;
+    background: rgba(220,38,38,0.13);
+    border: 1px solid rgba(220,38,38,0.35); border-radius: 8px;
+    transition: all 0.22s; margin-top: 0.5rem;
+  }
+  .yt-section-btn:hover { background: rgba(220,38,38,0.28); border-color: rgba(220,38,38,0.7); box-shadow: 0 0 14px rgba(220,38,38,0.18); }
+  .yt-section-btn .yt-icon { width: 15px; height: 15px; flex-shrink: 0; fill: #ff4444; }
+
+  .yt-gloss-link {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.68rem; font-weight: 600; color: #fca5a5;
+    text-decoration: none; padding: 0.2rem 0.55rem;
+    background: rgba(220,38,38,0.1);
+    border: 1px solid rgba(220,38,38,0.25); border-radius: 4px;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .yt-gloss-link:hover { background: rgba(220,38,38,0.22); border-color: rgba(220,38,38,0.5); }
+  .yt-gloss-link .yt-icon { width: 11px; height: 11px; fill: #f87171; }
+
+  .gloss-links { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  .split-img { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+  .split-img img { width: 100%; height: 280px; object-fit: cover; display: block; opacity: 0.85; }
+  .split-content p { font-size: 0.9rem; color: var(--light); line-height: 1.8; margin-bottom: 1.5rem; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem; }
+  .stat { text-align: center; padding: 1.5rem 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent2); line-height: 1; }
+  .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.4rem; }
+
+  .glossary { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .gloss-item { padding: 1.4rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+  .gloss-term { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+  .gloss-def { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.8rem; }
+
+  footer { text-align: center; padding: 3rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+  footer strong { color: var(--accent2); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .split { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .glossary { grid-template-columns: 1fr; }
+    .concepts { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Pronostic & PHM</div>
+  <ul class="nav-links">
+ 
+  </ul>
+  <a href="index.html" class="nav-back">← Portfolio</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="max-width:800px;width:100%">
+    <p style="font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:1rem;"></p>
+    <h1>Pronostic &<br><span>PHM</span></h1>
+    <p>Évaluer la santé des systèmes. Prédire la durée de vie restante. Prévenir les défaillances critiques.</p>
+
+    <div class="hero-img">
+  <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80" alt="Analyse prédictive et courbes de pronostic RUL maintenance industrielle">
+      <div class="hero-img-caption">
+        <span>↑</span> Analyse de l'état de santé d'un système industriel complexe via données capteurs
+      </div>
+    </div>
+
+<div class="stats" style="display:flex; justify-content:center; align-items:center; gap:20px; text-align:center;">
+  <div class="stat"><div class="stat-val">RUL</div><div class="stat-lbl">Durée vie restante</div></div>
+  <div class="stat"><div class="stat-val">HI</div><div class="stat-lbl">Health Index</div></div>
+  <div class="stat"><div class="stat-val">−40%</div><div class="stat-lbl">Défaillances critiques</div></div>
+</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONCEPTS CLÉS -->
+<section id="concepts">
+  <div class="section-label">Concepts fondamentaux</div>
+  <h2 class="section-title">Les piliers du <span>Pronostic & PHM</span></h2>
+
+  <div class="concepts">
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="Surveillance état de santé système">
+      <div class="concept-body">
+        <div class="concept-tag">Health Monitoring</div>
+        <div class="concept-title">Surveillance de l'état de santé</div>
+        <div class="concept-desc">Suivi continu des indicateurs de santé d'un système pour détecter toute dégradation avant qu'elle évolue en panne.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=health+monitoring+système+industriel+PHM" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=health+monitoring+PHM+industrial+system+condition+monitoring" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=600&q=80" alt="Prédiction durée de vie restante RUL">
+      <div class="concept-body">
+        <div class="concept-tag">Pronostic</div>
+        <div class="concept-title">Estimation du RUL</div>
+        <div class="concept-desc">Calcul de la durée de vie utile restante (Remaining Useful Life) d'un composant à partir de ses données de dégradation.</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=RUL+estimation+pronostic+remaining+useful+life" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=remaining+useful+life+RUL+prediction+prognostics+deep+learning" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card">
+      <img class="concept-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="Modèles de dégradation machine learning">
+      <div class="concept-body">
+        <div class="concept-tag">Modèles de dégradation</div>
+        <div class="concept-title">Modélisation physique & IA</div>
+        <div class="concept-desc">Combinaison de modèles de fiabilité (Weibull), de lois physiques de dégradation (loi de Paris-Erdogan pour la propagation des fissures) et d’algorithmes d’apprentissage automatique afin de modéliser et prédire la dégradation des composants et leur durée de vie restante (RUL).</div>
+        <div class="card-links">
+          <a class="google-link" href="https://www.google.com/search?q=modèle+dégradation+Weibull+pronostic+PHM" target="_blank">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+            Google
+          </a>
+          <a class="youtube-link" href="https://www.youtube.com/results?search_query=degradation+model+Weibull+prognostics+machine+learning+PHM" target="_blank">
+            <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SPLIT — APPROCHE PHM -->
+<section id="approche">
+  <div class="split">
+    <div class="split-img">
+<img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=80" alt="Analyse de données industrielles et supervision pour maintenance prédictive PHM">    </div>
+    <div class="split-content">
+      <div class="section-label">Architecture PHM</div>
+      <h2 class="section-title" style="margin-bottom:1rem;">Du diagnostic au <span>pronostic</span></h2>
+      <p>Le PHM va au-delà du simple diagnostic : il intègre la détection d'anomalies, l'identification du mode de défaillance, l'évaluation de la sévérité, et la prédiction de l'évolution temporelle jusqu'à la défaillance.</p>
+      <div class="card-links" style="margin-top:0;">
+        <a class="google-link" href="https://www.google.com/search?q=PHM+Prognostics+Health+Management+architecture+système" target="_blank">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/><path d="M13 10H7M10 7l3 3-3 3"/></svg>
+          En savoir plus — Architecture PHM
+        </a>
+        <a class="yt-section-btn" href="https://www.youtube.com/results?search_query=PHM+prognostics+health+management+architecture+fault+diagnosis" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          Voir sur YouTube
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GLOSSAIRE -->
+<section id="glossaire">
+  <div class="section-label">Vocabulaire essentiel</div>
+  <h2 class="section-title">Glossaire <span>PHM</span></h2>
+
+  <div class="glossary">
+
+    <div class="gloss-item">
+      <div class="gloss-term">
+        PHM — Prognostics & Health Management
+      </div>
+      <div class="gloss-def">Discipline intégrant la surveillance, le diagnostic et le pronostic de l'état de santé des systèmes pour optimiser leur maintenance et leur disponibilité.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=PHM+Prognostics+Health+Management+définition" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=PHM+prognostics+health+management+explained+tutorial" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">
+        RUL — Remaining Useful Life
+      </div>
+      <div class="gloss-def">Durée de fonctionnement résiduelle estimée d'un composant ou système avant sa défaillance fonctionnelle. Sortie principale d'un modèle pronostique.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=RUL+Remaining+Useful+Life+pronostic+définition" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=remaining+useful+life+RUL+prediction+LSTM+CMAPSS" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="gloss-item">
+      <div class="gloss-term">
+        HI — Health Index
+      </div>
+      <div class="gloss-def">Indicateur synthétique normalisé (0 à 1) représentant l'état de santé global d'un équipement, calculé à partir de la fusion de plusieurs signaux capteurs.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=Health+Index+indicateur+santé+équipement+PHM" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=health+index+construction+sensor+fusion+prognostics" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+
+    <div class="gloss-item">
+      <div class="gloss-term">
+        Loi de Weibull
+      </div>
+      <div class="gloss-def">Distribution statistique modélisant la durée de vie des composants. Utilisée pour estimer la probabilité de défaillance à un instant donné en fiabilité industrielle.</div>
+      <div class="gloss-links">
+        <a class="google-link" href="https://www.google.com/search?q=loi+de+Weibull+fiabilité+durée+de+vie+explication" target="_blank" style="font-size:0.68rem;white-space:nowrap;">Définition →</a>
+        <a class="yt-gloss-link" href="https://www.youtube.com/results?search_query=Weibull+distribution+reliability+engineering+failure+analysis+tutorial" target="_blank">
+          <svg class="yt-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.4 12 20.4 12 20.4s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+          YouTube
+        </a>
+      </div>
+    </div>
+
+   
+
+
+
+
+  </div>
+</section>
+
+<footer>
+  <strong>Pronostic & PHM</strong> — Prognostics and Health Management &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; <a href="page.html" style="color:var(--muted);text-decoration:none;">← Retour au portfolio</a>
+</footer>
+
+</body>
+</html>
