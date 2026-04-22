@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Étude de Cas – Maintenance Prédictive FMDS</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #03091e;
+    --card:    #0a2052;
+    --card2:   #0a1f41;
+    --border:  rgba(255,255,255,0.07);
+    --accent:  #4f8ef7;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --text:    #e8eaf0;
+    --muted:   #636b7a;
+    --muted2:  #8892a4;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:'DM Sans',sans-serif; font-weight:300;
+    line-height:1.7; overflow-x:hidden;
+  }
+  
+.nav-inner {
+  max-width:1140px; margin:0 auto;
+  padding:14px 32px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; width:100%; z-index:100;
+    background:rgba(7,9,15,0.82); backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner {
+    max-width:1100px; margin:0 auto;
+    padding:18px 40px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; letter-spacing:.06em; }
+  .nav-logo span { color:var(--accent); }
+  .nav-back {
+    font-size:.8rem; color:var(--muted); text-decoration:none;
+    display:flex; align-items:center; gap:8px;
+    padding:7px 16px; border-radius:8px; border:1px solid var(--border);
+    transition:all .2s;
+  }
+  .nav-back:hover { color:var(--accent); border-color:rgba(79,142,247,.3); background:rgba(79,142,247,.05); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    justify-content:center; align-items:center;
+    text-align:center;
+    position:relative; overflow:hidden;
+    padding:120px 40px 80px;
+  }
+  .hero-bg {
+    position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(79,142,247,.09) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, rgba(124,58,237,.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(16,185,129,.05) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 75%);
+  }
+  .hero-eyebrow {
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:.72rem; font-weight:500; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--accent); background:rgba(79,142,247,.08);
+    border:1px solid rgba(79,142,247,.2);
+    padding:7px 18px; border-radius:100px; margin-bottom:32px;
+    animation:fadeUp .6s ease both;
+  }
+  .hero-eyebrow::before { content:'●'; font-size:.5rem; }
+  h1 {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size:clamp(2.6rem,6vw,5rem);
+    line-height:1.06; letter-spacing:-.025em; max-width:820px;
+    animation:fadeUp .7s .1s ease both;
+  }
+  h1 em    { font-style:normal; color:var(--accent); }
+  h1 strong { font-style:normal; color:#c4b5fd; }
+  .hero-desc {
+    margin-top:24px; max-width:580px;
+    font-size:1rem; color:var(--muted2); line-height:1.85;
+    animation:fadeUp .7s .2s ease both;
+  }
+  .hero-tags {
+    margin-top:36px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+    animation:fadeUp .7s .3s ease both;
+  }
+  .tag {
+    padding:5px 14px; border-radius:100px;
+    font-size:.75rem; font-weight:500; letter-spacing:.04em;
+    border:1px solid var(--border); color:var(--muted2);
+    background:rgba(255,255,255,.025); transition:all .2s;
+  }
+  .tag.blue   { border-color:rgba(79,142,247,.25);  color:#93bbfc; }
+  .tag.purple { border-color:rgba(124,58,237,.25);  color:#c4b5fd; }
+  .tag.green  { border-color:rgba(16,185,129,.25);  color:#6ee7b7; }
+  .tag.amber  { border-color:rgba(245,158,11,.25);  color:#fcd34d; }
+  .hero-scroll {
+    position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+    animation:bob 2.5s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+  /* ── SECTION ── */
+  .section { padding:96px 40px; border-top:1px solid var(--border); }
+  .section-inner { max-width:1100px; margin:0 auto; }
+  .section-label {
+    display:inline-flex; align-items:center; gap:10px;
+    font-size:.7rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:16px;
+  }
+  .section-label::before { content:''; display:block; width:24px; height:1px; background:var(--muted); }
+  h2 {
+    font-family:'Syne',sans-serif; font-weight:700;
+    font-size:clamp(1.7rem,3vw,2.6rem); line-height:1.12; margin-bottom:14px;
+  }
+  h2 span { color:var(--accent); }
+  .section-intro { font-size:.95rem; color:var(--muted2); max-width:660px; line-height:1.85; margin-bottom:52px; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background:var(--card); border:1px solid var(--border);
+    border-left:3px solid var(--accent); border-radius:14px;
+    padding:24px 28px; font-size:.9rem; color:var(--muted2); line-height:1.85;
+    margin-bottom:40px;
+  }
+  .info-box strong { color:var(--text); }
+
+  /* ── DATASET CARD ── */
+  .dataset-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; padding:32px 36px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    margin-bottom:40px; flex-wrap:wrap;
+    transition:border-color .3s;
+  }
+  .dataset-card:hover { border-color:rgba(79,142,247,.25); }
+  .dataset-info h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:8px; }
+  .dataset-info p  { font-size:.88rem; color:var(--muted2); max-width:480px; }
+  .btn-kaggle {
+    display:inline-flex; align-items:center; gap:10px;
+    padding:12px 24px; border-radius:10px;
+    background:rgba(79,142,247,.1); border:1px solid rgba(79,142,247,.25);
+    color:#93bbfc; font-size:.85rem; font-weight:500; text-decoration:none;
+    white-space:nowrap; transition:all .2s;
+  }
+  .btn-kaggle:hover { background:rgba(79,142,247,.18); border-color:rgba(79,142,247,.45); color:var(--text); }
+
+  /* ── SPECS GRID ── */
+  .specs-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:52px; }
+  .spec-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; padding:28px;
+    transition:border-color .3s, transform .3s;
+  }
+  .spec-card:hover { transform:translateY(-4px); border-color:rgba(79,142,247,.18); }
+  .spec-card h3 {
+    font-family:'Syne',sans-serif; font-weight:700; font-size:.95rem;
+    color:var(--accent); margin-bottom:16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .spec-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .spec-list li {
+    font-size:.87rem; color:var(--muted2); padding:8px 12px;
+    background:rgba(255,255,255,.025); border-radius:8px;
+    border-left:2px solid rgba(79,142,247,.3);
+  }
+  .spec-list li b { color:var(--text); }
+
+  /* ── FMDS METRICS ── */
+  .fmds-big { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:40px; }
+  .fmds-metric {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; padding:28px 20px; text-align:center;
+    position:relative; overflow:hidden;
+    transition:transform .3s, border-color .3s;
+  }
+  .fmds-metric:hover { transform:translateY(-5px); }
+  .fmds-metric::before {
+    content:''; position:absolute; top:0; left:15%; right:15%; height:1px;
+  }
+  .fmds-metric.cb::before { background:linear-gradient(90deg,transparent,var(--accent),transparent); }
+  .fmds-metric.cg::before { background:linear-gradient(90deg,transparent,var(--accent3),transparent); }
+  .fmds-metric.cp::before { background:linear-gradient(90deg,transparent,var(--accent2),transparent); }
+  .fmds-metric.ca::before { background:linear-gradient(90deg,transparent,var(--accent4),transparent); }
+  .fmds-metric:hover.cb { border-color:rgba(79,142,247,.3); }
+  .fmds-metric:hover.cg { border-color:rgba(16,185,129,.3); }
+  .fmds-metric:hover.cp { border-color:rgba(124,58,237,.3); }
+  .fmds-metric:hover.ca { border-color:rgba(245,158,11,.3); }
+  .fmds-icon  { font-size:1.8rem; margin-bottom:12px; display:block; }
+  .fmds-val   {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:2rem; line-height:1;
+    margin-bottom:6px;
+  }
+  .cb .fmds-val { color:#93bbfc; }
+  .cg .fmds-val { color:#6ee7b7; }
+  .cp .fmds-val { color:#c4b5fd; }
+  .ca .fmds-val { color:#fcd34d; }
+  .fmds-name  { font-size:.72rem; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px; }
+  .fmds-badge {
+    display:inline-block; font-size:.7rem; padding:4px 12px; border-radius:6px; font-weight:500;
+  }
+  .cb .fmds-badge { background:rgba(79,142,247,.1);  color:#93bbfc; border:1px solid rgba(79,142,247,.2); }
+  .cg .fmds-badge { background:rgba(16,185,129,.1);  color:#6ee7b7; border:1px solid rgba(16,185,129,.2); }
+  .cp .fmds-badge { background:rgba(124,58,237,.1);  color:#c4b5fd; border:1px solid rgba(124,58,237,.2); }
+  .ca .fmds-badge { background:rgba(245,158,11,.1);  color:#fcd34d; border:1px solid rgba(245,158,11,.2); }
+
+  /* FMDS TABLE */
+  .fmds-table-wrap {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; overflow:hidden; margin-bottom:52px;
+  }
+  .fmds-table-title {
+    padding:20px 28px; border-bottom:1px solid var(--border);
+    font-size:.7rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+  }
+  table { width:100%; border-collapse:collapse; }
+  thead th {
+    padding:14px 24px; text-align:left;
+    font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); background:rgba(255,255,255,.025);
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr { transition:background .2s; }
+  tbody tr:hover { background:rgba(255,255,255,.02); }
+  tbody tr + tr { border-top:1px solid var(--border); }
+  tbody td { padding:16px 24px; font-size:.88rem; color:var(--muted2); }
+  tbody td:first-child { font-family:'Syne',sans-serif; font-weight:600; color:var(--text); font-size:.9rem; }
+  tbody td:nth-child(2) { font-family:'Syne',sans-serif; font-weight:700; color:var(--accent); }
+
+  /* ── STEP DIVIDER ── */
+  .step-divider {
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    padding:20px 0 48px;
+  }
+  .step-divider span {
+    font-size:.68rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+  }
+  .step-divider::before,.step-divider::after {
+    content:''; flex:1; max-width:120px; height:1px; background:var(--border);
+  }
+
+  /* ── WEIBULL ── */
+  .weibull-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .weibull-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; padding:32px; transition:border-color .3s;
+  }
+  .weibull-card:hover { border-color:rgba(79,142,247,.2); }
+  .w-curve {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:.68rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:14px;
+    padding:4px 12px; border-radius:6px; background:rgba(255,255,255,.03); border:1px solid var(--border);
+  }
+  .weibull-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:10px; }
+  .weibull-params {
+    display:flex; gap:16px; margin:16px 0;
+  }
+  .wparam {
+    flex:1; background:rgba(255,255,255,.025); border:1px solid var(--border);
+    border-radius:10px; padding:12px 16px; text-align:center;
+  }
+  .wparam-label { font-size:.65rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .wparam-val   { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; color:#93bbfc; }
+  .weibull-card p { font-size:.87rem; color:var(--muted2); line-height:1.75; margin-bottom:14px; }
+  .trend {
+    display:flex; align-items:center; gap:10px; font-size:.84rem; color:var(--muted2);
+    padding:10px 14px; border-radius:10px; background:rgba(255,255,255,.025);
+  }
+  .trend-arrow { font-size:1.1rem; font-weight:700; }
+  .td .trend-arrow { color:#f87171; }
+  .tu .trend-arrow { color:#fb923c; }
+
+  /* ── ALGO LIST ── */
+  .algo-list { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+  .algo-item {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:22px 28px;
+    display:grid; grid-template-columns:48px 1fr auto;
+    align-items:center; gap:20px; transition:all .25s;
+  }
+  .algo-item:hover { transform:translateX(5px); border-color:rgba(79,142,247,.18); }
+  .algo-item.best { border-color:rgba(16,185,129,.25); background:linear-gradient(135deg,rgba(16,185,129,.04) 0%,var(--card) 60%); }
+  .algo-rank { font-family:'Syne',sans-serif; font-weight:800; font-size:1.7rem; line-height:1; color:rgba(255,255,255,.06); text-align:center; }
+  .algo-item.best .algo-rank { color:rgba(16,185,129,.35); }
+  .algo-name   { font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:5px; }
+  .algo-detail { font-size:.83rem; color:var(--muted2); line-height:1.6; }
+  .algo-badge  { padding:6px 14px; border-radius:8px; font-size:.77rem; font-weight:600; white-space:nowrap; }
+  .bb { background:rgba(16,185,129,.12); color:#6ee7b7; border:1px solid rgba(16,185,129,.2); }
+  .bg { background:rgba(79,142,247,.1);  color:#93bbfc; border:1px solid rgba(79,142,247,.15); }
+  .bo { background:rgba(245,158,11,.08); color:#fcd34d; border:1px solid rgba(245,158,11,.13); }
+
+  /* BAR CHART */
+  .chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:32px 36px; }
+  .chart-title { font-size:.7rem; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:28px; }
+  .bar-row { display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .bar-row:last-child { margin-bottom:0; }
+  .bar-name  { font-size:.83rem; font-weight:500; min-width:130px; color:var(--muted2); }
+  .bar-track { flex:1; height:9px; background:rgba(255,255,255,.04); border-radius:5px; overflow:hidden; }
+  .bar-fill  { height:100%; border-radius:5px; transition:width 1.2s cubic-bezier(.4,0,.2,1); }
+  .bfg { background:linear-gradient(90deg,#10b981,#34d399); }
+  .bfb { background:linear-gradient(90deg,#4f8ef7,#93bbfc); }
+  .bfa { background:linear-gradient(90deg,#f59e0b,#fcd34d); }
+  .bar-val   { font-size:.83rem; font-weight:600; min-width:48px; text-align:right; }
+
+  /* ── PRONO ── */
+  .prono-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:40px; }
+  .prono-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:18px; padding:30px 24px;
+    text-align:center; position:relative; overflow:hidden;
+    transition:transform .3s, border-color .3s;
+  }
+  .prono-card:hover { transform:translateY(-4px); }
+  .prono-card.winner { border-color:rgba(16,185,129,.3); background:linear-gradient(160deg,rgba(16,185,129,.06) 0%,var(--card) 50%); }
+  .winner-badge {
+    display:inline-block; margin-bottom:20px;
+    font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    color:#6ee7b7; background:rgba(16,185,129,.12); padding:5px 12px; border-radius:6px; border:1px solid rgba(16,185,129,.2);
+  }
+  .prono-spacer { height:26px; margin-bottom:20px; }
+  .prono-model { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:24px; }
+  .metric { margin-bottom:16px; }
+  .metric-label { font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+  .metric-val   { font-family:'Syne',sans-serif; font-weight:800; font-size:1.7rem; line-height:1; }
+  .mvg { color:#6ee7b7; } .mvb { color:#93bbfc; } .mva { color:#fcd34d; }
+  .mvr { color:#f87171; } .mvm { color:var(--muted); font-size:1.2rem; }
+  .prono-note { font-size:.8rem; color:var(--muted); line-height:1.6; margin-top:4px; }
+
+  /* ── RUL ALERT ── */
+  .rul-alert {
+    background:linear-gradient(135deg,rgba(239,68,68,.06),rgba(245,158,11,.03));
+    border:1px solid rgba(239,68,68,.2); border-radius:20px; padding:44px;
+    display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center;
+  }
+  .alert-icon  { font-size:2.6rem; margin-bottom:14px; }
+  .alert-title { font-family:'Syne',sans-serif; font-weight:800; font-size:1.5rem; color:#f87171; margin-bottom:12px; }
+  .alert-desc  { font-size:.9rem; color:var(--muted2); line-height:1.85; }
+  .rul-stats   { display:flex; flex-direction:column; gap:14px; }
+  .rul-stat {
+    background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.06);
+    border-radius:14px; padding:20px 24px;
+    display:flex; align-items:center; gap:18px;
+  }
+  .rul-stat-icon  { font-size:1.5rem; }
+  .rul-stat-label { font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .rul-stat-val   { font-family:'Syne',sans-serif; font-weight:800; font-size:1.6rem; color:#f87171; line-height:1; }
+
+  /* ── CONCLUSION ── */
+  .conclusion-box {
+    background:linear-gradient(135deg,rgba(79,142,247,.05),rgba(124,58,237,.03));
+    border:1px solid rgba(79,142,247,.12); border-radius:24px; padding:64px 48px; text-align:center;
+  }
+  .conclusion-box h3 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.6rem,3vw,2.2rem); margin-bottom:18px; }
+  .conclusion-box p  { max-width:680px; margin:0 auto 36px; color:var(--muted2); font-size:.97rem; line-height:1.85; }
+  .tech-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+  .tech-pill {
+    padding:7px 18px; border-radius:100px; font-size:.78rem; font-weight:500;
+    background:rgba(255,255,255,.03); border:1px solid var(--border); color:var(--muted2); transition:all .2s;
+  }
+  .tech-pill:hover { color:var(--text); border-color:rgba(255,255,255,.15); }
+
+  /* ── FOOTER ── */
+  footer { border-top:1px solid var(--border); padding:36px 40px; }
+  .footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
+  footer p { font-size:.8rem; color:var(--muted); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s ease,transform .6s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .d1{transition-delay:.1s} .d2{transition-delay:.2s} .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    .fmds-big,.prono-grid{grid-template-columns:1fr 1fr;}
+    .specs-grid{grid-template-columns:1fr;}
+  }
+  @media(max-width:640px){
+    .nav-inner,.section,.hero,.footer-inner{padding-left:20px;padding-right:20px;}
+    .fmds-big,.weibull-grid,.prono-grid,.rul-alert,.specs-grid{grid-template-columns:1fr;}
+    .algo-item{grid-template-columns:40px 1fr;}
+    .algo-badge{display:none;}
+    .dataset-card{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+<div class="nav-logo">
+  <div class="nav-logo"></div>
+</div>
+
+<div class="nav-actions">
+  <a href="Rapport.pdf" download class="btn-nav primary" style="margin-right: 15px;">
+    ⬇ <span>Télécharger le rapport</span>
+  </a>
+  <a href="index.html" class="btn-nav">
+    ← <span>Retour</span>
+  </a>
+</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Étude de Cas · Kaggle Dataset</div>
+  <h1>Maintenance <em>Prédictive</em><br>des Machines <strong>Industrielles</strong></h1>
+  <p class="hero-desc">
+    Fiabilité FMDS, modélisation Weibull, diagnostic Machine Learning et prédiction
+    de la durée de vie résiduelle (RUL) — un pipeline complet de maintenance conditionnelle.
+  </p>
+  <div class="hero-tags">
+    <span class="tag blue">FMDS · Disponibilité 93.62%</span>
+    <span class="tag green">Random Forest · 92.4%</span>
+    <span class="tag purple">Weibull β=1.8</span>
+    <span class="tag amber">RUL · 6.89 jours</span>
+    <span class="tag">Python · Scikit-learn</span>
+    <span class="tag">Kaggle Dataset</span>
+  </div>
+  <div class="hero-scroll">
+    <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+      <rect x="1" y="1" width="14" height="18" rx="7" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="8" cy="6" r="2" fill="currentColor"/>
+    </svg>
+    Scroll
+  </div>
+</section>
+
+<!-- ── SECTION 0 : DATASET ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">00 — Données</div>
+    <h2 class="reveal">Dataset <span>Kaggle</span></h2>
+    <p class="section-intro reveal">
+      Dataset de maintenance prédictive des machines industrielles — capteurs mécaniques
+      et thermiques, classifiant les types de pannes pour anticiper les défaillances.
+    </p>
+
+    <div class="dataset-card reveal">
+      <div class="dataset-info">
+        <h3>📁 Machine Predictive Maintenance Classification</h3>
+        <p>Données de capteurs industriels (température, vitesse, couple, usure outil) pour la classification des modes de défaillance et la prédiction de la maintenance.</p>
+      </div>
+      <a class="btn-kaggle" href="https://www.kaggle.com/datasets/shivamb/machine-predictive-maintenance-classification" target="_blank">
+        📥 Ouvrir sur Kaggle
+      </a>
+    </div>
+
+    <div class="specs-grid reveal">
+      <div class="spec-card">
+        <h3>⚙️ Paramètres mécaniques</h3>
+        <ul class="spec-list">
+          <li><b>Vitesse de rotation :</b> 1 200 – 2 000 rpm</li>
+          <li><b>Couple :</b> 20 – 70 Nm</li>
+          <li><b>Température :</b> 295 – 310 K</li>
+          <li><b>Rendement :</b> 85 – 95 %</li>
+        </ul>
+      </div>
+      <div class="spec-card d1">
+        <h3>🌡️ Capteurs utilisés</h3>
+        <ul class="spec-list">
+          <li>Température air ambiant</li>
+          <li>Température process</li>
+          <li>Vitesse de rotation</li>
+          <li>Couple moteur</li>
+          <li>Tool wear (usure outil)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 1 : FMDS ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">01 — Fiabilité</div>
+    <h2 class="reveal">Résultats <span>FMDS</span></h2>
+    <p class="section-intro reveal">
+      Indicateurs de Fiabilité, Maintenabilité, Disponibilité et Sécurité calculés
+      à partir des données de défaillance du dataset Kaggle.
+    </p>
+
+    <!-- 4 BIG METRICS -->
+    <div class="fmds-big">
+      <div class="fmds-metric cb reveal d1">
+        <span class="fmds-icon">⏱️</span>
+        <div class="fmds-val">29.36</div>
+        <div class="fmds-name">MTBF</div>
+        <span class="fmds-badge">Bonne fiabilité</span>
+      </div>
+      <div class="fmds-metric cg reveal d2">
+        <span class="fmds-icon">🔧</span>
+        <div class="fmds-val">2</div>
+        <div class="fmds-name">MTTR</div>
+        <span class="fmds-badge">Maintenance rapide</span>
+      </div>
+      <div class="fmds-metric cp reveal d3">
+        <span class="fmds-icon">📉</span>
+        <div class="fmds-val">0.034</div>
+        <div class="fmds-name">Taux défaillance λ</div>
+        <span class="fmds-badge">Faible taux de panne</span>
+      </div>
+      <div class="fmds-metric ca reveal d4">
+        <span class="fmds-icon">✅</span>
+        <div class="fmds-val">93.62%</div>
+        <div class="fmds-name">Disponibilité</div>
+        <span class="fmds-badge">Niveau industriel</span>
+      </div>
+    </div>
+
+    <!-- FMDS TABLE -->
+    <div class="fmds-table-wrap reveal">
+      <div class="fmds-table-title">📌 Résumé FMDS — Interprétation complète</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Indicateur</th>
+            <th>Valeur</th>
+            <th>Interprétation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MTBF</td>
+            <td>29.36</td>
+            <td>MTBF élevé → bonne fiabilité du moteur</td>
+          </tr>
+          <tr>
+            <td>MTTR</td>
+            <td>2</td>
+            <td>MTTR faible → maintenance rapide et efficace</td>
+          </tr>
+          <tr>
+            <td>Taux de défaillance (λ)</td>
+            <td>0.0341</td>
+            <td>Faible taux → système stable et robuste</td>
+          </tr>
+          <tr>
+            <td>Taux de réparation (μ)</td>
+            <td>0.5</td>
+            <td>Bonne capacité de remise en état</td>
+          </tr>
+          <tr>
+            <td>Disponibilité</td>
+            <td>93.62%</td>
+            <td>Disponibilité > 90% → niveau industriel excellent</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- WEIBULL -->
+    <div class="step-divider"><span>Modélisation Weibull</span></div>
+
+    <div class="weibull-grid">
+      <div class="weibull-card reveal">
+        <div class="w-curve">Courbe R(t)</div>
+        <h3>Fiabilité dans le temps</h3>
+        <div class="weibull-params">
+          <div class="wparam">
+            <div class="wparam-label">Paramètre β (forme)</div>
+            <div class="wparam-val">1.8</div>
+          </div>
+          <div class="wparam">
+            <div class="wparam-label">Paramètre η (échelle)</div>
+            <div class="wparam-val">35</div>
+          </div>
+        </div>
+        <p>β = 1.8 indique une défaillance à usure croissante — le taux de panne augmente progressivement avec le temps d'utilisation.</p>
+        <div class="trend td">
+          <span class="trend-arrow">↘</span>
+          R(t) diminue avec le temps — le système devient progressivement moins fiable.
+        </div>
+      </div>
+      <div class="weibull-card reveal d1">
+        <div class="w-curve">Courbe F(t)</div>
+        <h3>Probabilité de défaillance</h3>
+        <div class="weibull-params">
+          <div class="wparam">
+            <div class="wparam-label">Taux de défaillance</div>
+            <div class="wparam-val">0.034</div>
+          </div>
+          <div class="wparam">
+            <div class="wparam-label">Taux de réparation</div>
+            <div class="wparam-val">0.5</div>
+          </div>
+        </div>
+        <p>Le modèle capture le comportement global de dégradation du système et permet d'anticiper les zones à risque élevé avant la panne.</p>
+        <div class="trend tu">
+          <span class="trend-arrow">↗</span>
+          F(t) augmente — le risque de panne croît avec le temps d'utilisation.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 2 : DIAGNOSTIC ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">02 — Diagnostic</div>
+    <h2 class="reveal">Classification de <span>l'état machine</span></h2>
+    <p class="section-intro reveal">
+      Trois algorithmes de classification comparés pour détecter l'état des machines
+      à partir des signaux capteurs : <strong>Normal</strong>, <strong>Dégradé</strong> et <strong>Défaillant</strong>.
+    </p>
+
+    <div class="algo-list">
+      <div class="algo-item best reveal">
+        <div class="algo-rank">1</div>
+        <div>
+          <div class="algo-name">Random Forest</div>
+          <div class="algo-detail">Meilleure accuracy globale · Équilibre parfait précision/rappel · Classe Défaillant très bien détectée</div>
+        </div>
+        <span class="algo-badge bb">✓ Meilleur</span>
+      </div>
+      <div class="algo-item reveal d1">
+        <div class="algo-rank">2</div>
+        <div>
+          <div class="algo-name">SVM — Support Vector Machine</div>
+          <div class="algo-detail">Accuracy 90.3% · Bon modèle global · Légèrement moins stable sur petites classes</div>
+        </div>
+        <span class="algo-badge bg">Bon modèle</span>
+      </div>
+      <div class="algo-item reveal d2">
+        <div class="algo-rank">3</div>
+        <div>
+          <div class="algo-name">Decision Tree</div>
+          <div class="algo-detail">Accuracy 90.1% · Modèle simple · Potentiellement instable · Légères confusions entre classes</div>
+        </div>
+        <span class="algo-badge bo">Acceptable</span>
+      </div>
+    </div>
+
+    <div class="chart-wrap reveal">
+      <div class="chart-title">Accuracy comparée des 3 algorithmes</div>
+      <div class="bar-row">
+        <div class="bar-name">Random Forest</div>
+        <div class="bar-track"><div class="bar-fill bfg" style="width:0%" data-w="92.4%"></div></div>
+        <div class="bar-val" style="color:#6ee7b7">92.4%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">SVM</div>
+        <div class="bar-track"><div class="bar-fill bfb" style="width:0%" data-w="90.3%"></div></div>
+        <div class="bar-val" style="color:#93bbfc">90.3%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Decision Tree</div>
+        <div class="bar-track"><div class="bar-fill bfa" style="width:0%" data-w="90.1%"></div></div>
+        <div class="bar-val" style="color:#fcd34d">90.1%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 3 : PRONOSTIC ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">03 — Pronostic</div>
+    <h2 class="reveal">Prédiction de la <span>Durée de Vie Résiduelle (RUL)</span></h2>
+    <p class="section-intro reveal">
+      Trois modèles de régression comparés pour prédire la Remaining Useful Life.
+      Évaluation via le <strong>RMSE</strong> (erreur) et le <strong>R²</strong> (qualité d'ajustement).
+    </p>
+
+    <div class="prono-grid">
+      <div class="prono-card winner reveal">
+        <div class="winner-badge">★ Modèle Recommandé</div>
+        <div class="prono-model">Random Forest</div>
+        <div class="metric">
+          <div class="metric-label">RMSE — Erreur</div>
+          <div class="metric-val mvg">14.8</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">R² Score</div>
+          <div class="metric-val mvg">0.94</div>
+        </div>
+        <div class="prono-note">Faible erreur, très haute précision — modèle recommandé pour la production.</div>
+      </div>
+      <div class="prono-card reveal d1">
+        <div class="prono-spacer"></div>
+        <div class="prono-model">MLP Neural Network</div>
+        <div class="metric">
+          <div class="metric-label">RMSE — Erreur</div>
+          <div class="metric-val mvb">18.5</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">R² Score</div>
+          <div class="metric-val mvb">0.90</div>
+        </div>
+        <div class="prono-note">Bons résultats mais légèrement moins précis que Random Forest.</div>
+      </div>
+      <div class="prono-card reveal d2">
+        <div class="prono-spacer"></div>
+        <div class="prono-model">Régression Linéaire</div>
+        <div class="metric">
+          <div class="metric-label">RMSE — Erreur</div>
+          <div class="metric-val mvr">29.3</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">R² Score</div>
+          <div class="metric-val mva">0.75</div>
+        </div>
+        <div class="prono-note">Moins performante — ne capture pas la complexité des données non-linéaires.</div>
+      </div>
+    </div>
+
+    <!-- RUL ALERT -->
+    <div class="rul-alert reveal">
+      <div>
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-title">Durée de Vie Résiduelle Estimée</div>
+        <p class="alert-desc">
+          Test sur fichier réel — le modèle Random Forest a analysé les données capteurs
+          et prédit la durée de vie résiduelle restante avant défaillance critique.
+          Une intervention préventive est recommandée.
+        </p>
+      </div>
+      <div class="rul-stats">
+        <div class="rul-stat">
+          <div class="rul-stat-icon">📅</div>
+          <div>
+            <div class="rul-stat-label">Durée de vie résiduelle</div>
+            <div class="rul-stat-val">≈ 6.89 jours</div>
+          </div>
+        </div>
+        <div class="rul-stat">
+          <div class="rul-stat-icon">⏳</div>
+          <div>
+            <div class="rul-stat-label">En heures</div>
+            <div class="rul-stat-val">≈ 165.38 h</div>
+          </div>
+        </div>
+        <div class="rul-stat">
+          <div class="rul-stat-icon">🔄</div>
+          <div>
+            <div class="rul-stat-label">En cycles</div>
+            <div class="rul-stat-val">≈ 9 923 cycles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONCLUSION ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="conclusion-box reveal">
+      <h3>Bilan du Projet</h3>
+      <p>
+        Ce projet démontre une approche complète de maintenance conditionnelle basée sur les données capteurs.
+        Avec une disponibilité de <strong>93.62%</strong>, une accuracy de diagnostic de <strong>92.4%</strong>
+        et une prédiction RUL précise (R² = 0.94), le pipeline permet d'anticiper les pannes
+        avant qu'elles surviennent — réduisant les coûts de maintenance et les arrêts non planifiés.
+      </p>
+      <div class="tech-pills">
+        <span class="tech-pill">Kaggle Dataset</span>
+        <span class="tech-pill">Python · Scikit-learn</span>
+        <span class="tech-pill">Weibull β=1.8 η=35</span>
+        <span class="tech-pill">MTBF 29.36 · MTTR 2</span>
+        <span class="tech-pill">Disponibilité 93.62%</span>
+        <span class="tech-pill">Random Forest 92.4%</span>
+        <span class="tech-pill">MLP · Régression Linéaire</span>
+        <span class="tech-pill">RUL Prediction R²=0.94</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p>Étude de Cas — Maintenance Prédictive des Machines Industrielles · Kaggle</p>
+    <p>Portfolio · 2025</p>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Animate bars
+  const barObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(() => { e.target.style.width = e.target.dataset.w; }, 200);
+        barObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.bar-fill[data-w]').forEach(b => barObs.observe(b));
+</script>
+</body>
+</html>
