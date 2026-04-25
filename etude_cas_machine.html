@@ -439,8 +439,8 @@
   </p>
   <div class="hero-tags">
     <span class="tag blue">FMDS · Disponibilité 93.62%</span>
-    <span class="tag green">Random Forest · 92.4%</span>
-    <span class="tag purple">Weibull β=1.8</span>
+    <span class="tag green">Random Forest · 98%</span>
+    <span class="tag purple">Weibull ρ=2.61</span>
     <span class="tag amber">RUL · 6.89 jours</span>
     <span class="tag">Python · Scikit-learn</span>
     <span class="tag">Kaggle Dataset</span>
@@ -524,7 +524,7 @@
       </div>
       <div class="fmds-metric cp reveal d3">
         <span class="fmds-icon">📉</span>
-        <div class="fmds-val">0.034</div>
+        <div class="fmds-val">0.0341</div>
         <div class="fmds-name">Taux défaillance λ</div>
         <span class="fmds-badge">Faible taux de panne</span>
       </div>
@@ -550,12 +550,12 @@
         <tbody>
           <tr>
             <td>MTBF</td>
-            <td>29.36</td>
+            <td>29.36 cycles</td>
             <td>MTBF élevé → bonne fiabilité du moteur</td>
           </tr>
           <tr>
             <td>MTTR</td>
-            <td>2</td>
+            <td>2 cycles</td>
             <td>MTTR faible → maintenance rapide et efficace</td>
           </tr>
           <tr>
@@ -586,15 +586,15 @@
         <h3>Fiabilité dans le temps</h3>
         <div class="weibull-params">
           <div class="wparam">
-            <div class="wparam-label">Paramètre β (forme)</div>
-            <div class="wparam-val">1.8</div>
+            <div class="wparam-label">Paramètre ρ (forme)</div>
+            <div class="wparam-val">2.61</div>
           </div>
           <div class="wparam">
-            <div class="wparam-label">Paramètre η (échelle)</div>
-            <div class="wparam-val">35</div>
+            <div class="wparam-label">Paramètre λ (échelle)</div>
+            <div class="wparam-val">487.52</div>
           </div>
         </div>
-        <p>β = 1.8 indique une défaillance à usure croissante — le taux de panne augmente progressivement avec le temps d'utilisation.</p>
+        <p>ρ = 2.61 > 1 indique une défaillance à usure croissante — le taux de panne augmente progressivement avec le temps d'utilisation (vieillissement des composants).</p>
         <div class="trend td">
           <span class="trend-arrow">↘</span>
           R(t) diminue avec le temps — le système devient progressivement moins fiable.
@@ -605,15 +605,15 @@
         <h3>Probabilité de défaillance</h3>
         <div class="weibull-params">
           <div class="wparam">
-            <div class="wparam-label">Taux de défaillance</div>
-            <div class="wparam-val">0.034</div>
+            <div class="wparam-label">Durée vie caractéristique</div>
+            <div class="wparam-val">487.52</div>
           </div>
           <div class="wparam">
-            <div class="wparam-label">Taux de réparation</div>
-            <div class="wparam-val">0.5</div>
+            <div class="wparam-label">Phase critique (cycles)</div>
+            <div class="wparam-val">> 487</div>
           </div>
         </div>
-        <p>Le modèle capture le comportement global de dégradation du système et permet d'anticiper les zones à risque élevé avant la panne.</p>
+        <p>Au-delà de λ ≈ 487.52 cycles, la probabilité de défaillance augmente fortement. Le modèle distingue 3 phases : stable (0–200), dégradation (200–400), critique (> 487).</p>
         <div class="trend tu">
           <span class="trend-arrow">↗</span>
           F(t) augmente — le risque de panne croît avec le temps d'utilisation.
@@ -630,7 +630,7 @@
     <h2 class="reveal">Classification de <span>l'état machine</span></h2>
     <p class="section-intro reveal">
       Trois algorithmes de classification comparés pour détecter l'état des machines
-      à partir des signaux capteurs : <strong>Normal</strong>, <strong>Dégradé</strong> et <strong>Défaillant</strong>.
+      à partir des signaux capteurs : <strong>Normal</strong> et <strong>Défaillant</strong>.
     </p>
 
     <div class="algo-list">
@@ -638,7 +638,7 @@
         <div class="algo-rank">1</div>
         <div>
           <div class="algo-name">Random Forest</div>
-          <div class="algo-detail">Meilleure accuracy globale · Équilibre parfait précision/rappel · Classe Défaillant très bien détectée</div>
+          <div class="algo-detail">Meilleure accuracy globale · Precision panne 0.85 · Recall 0.36 · F1-score 0.51 — variable la plus influente : Torque (0.3286)</div>
         </div>
         <span class="algo-badge bb">✓ Meilleur</span>
       </div>
@@ -646,7 +646,7 @@
         <div class="algo-rank">2</div>
         <div>
           <div class="algo-name">SVM — Support Vector Machine</div>
-          <div class="algo-detail">Accuracy 90.3% · Bon modèle global · Légèrement moins stable sur petites classes</div>
+          <div class="algo-detail">Accuracy 97.2% · Precision panne 0.83 · Recall 0.22 · F1-score 0.35 — moins performant sur données déséquilibrées</div>
         </div>
         <span class="algo-badge bg">Bon modèle</span>
       </div>
@@ -654,7 +654,7 @@
         <div class="algo-rank">3</div>
         <div>
           <div class="algo-name">Decision Tree</div>
-          <div class="algo-detail">Accuracy 90.1% · Modèle simple · Potentiellement instable · Légères confusions entre classes</div>
+          <div class="algo-detail">Accuracy 97% · Precision panne 0.80 · Recall 0.32 · F1-score 0.46 — bonne interprétabilité, risque de surapprentissage</div>
         </div>
         <span class="algo-badge bo">Acceptable</span>
       </div>
@@ -664,18 +664,18 @@
       <div class="chart-title">Accuracy comparée des 3 algorithmes</div>
       <div class="bar-row">
         <div class="bar-name">Random Forest</div>
-        <div class="bar-track"><div class="bar-fill bfg" style="width:0%" data-w="92.4%"></div></div>
-        <div class="bar-val" style="color:#6ee7b7">92.4%</div>
+        <div class="bar-track"><div class="bar-fill bfg" style="width:0%" data-w="98%"></div></div>
+        <div class="bar-val" style="color:#6ee7b7">98%</div>
       </div>
       <div class="bar-row">
         <div class="bar-name">SVM</div>
-        <div class="bar-track"><div class="bar-fill bfb" style="width:0%" data-w="90.3%"></div></div>
-        <div class="bar-val" style="color:#93bbfc">90.3%</div>
+        <div class="bar-track"><div class="bar-fill bfb" style="width:0%" data-w="97.2%"></div></div>
+        <div class="bar-val" style="color:#93bbfc">97.2%</div>
       </div>
       <div class="bar-row">
         <div class="bar-name">Decision Tree</div>
-        <div class="bar-track"><div class="bar-fill bfa" style="width:0%" data-w="90.1%"></div></div>
-        <div class="bar-val" style="color:#fcd34d">90.1%</div>
+        <div class="bar-track"><div class="bar-fill bfa" style="width:0%" data-w="97%"></div></div>
+        <div class="bar-val" style="color:#fcd34d">97%</div>
       </div>
     </div>
   </div>
@@ -687,49 +687,49 @@
     <div class="section-label reveal">03 — Pronostic</div>
     <h2 class="reveal">Prédiction de la <span>Durée de Vie Résiduelle (RUL)</span></h2>
     <p class="section-intro reveal">
-      Trois modèles de régression comparés pour prédire la Remaining Useful Life.
-      Évaluation via le <strong>RMSE</strong> (erreur) et le <strong>R²</strong> (qualité d'ajustement).
+      Modèle de régression XGBoost pour prédire la Remaining Useful Life.
+      Évaluation via le <strong>RMSE</strong> (erreur), le <strong>MAE</strong> et le <strong>R²</strong> (qualité d'ajustement).
     </p>
 
     <div class="prono-grid">
       <div class="prono-card winner reveal">
         <div class="winner-badge">★ Modèle Recommandé</div>
-        <div class="prono-model">Random Forest</div>
+        <div class="prono-model">XGBoost Regressor</div>
         <div class="metric">
-          <div class="metric-label">RMSE — Erreur</div>
-          <div class="metric-val mvg">3.231404</div>
+          <div class="metric-label">RMSE — Erreur quadratique</div>
+          <div class="metric-val mvg">3.23</div>
         </div>
         <div class="metric">
           <div class="metric-label">R² Score</div>
-          <div class="metric-val mvg">0.9374</div>
+          <div class="metric-val mvg">0.937</div>
         </div>
         <div class="prono-note">Faible erreur, très haute précision — modèle recommandé pour la production.</div>
       </div>
       <div class="prono-card reveal d1">
         <div class="prono-spacer"></div>
-        <div class="prono-model">MLP Neural Network</div>
+        <div class="prono-model">XGBoost — MAE</div>
         <div class="metric">
-          <div class="metric-label">RMSE — Erreur</div>
-          <div class="metric-val mvb">18.5</div>
+          <div class="metric-label">MAE — Erreur absolue</div>
+          <div class="metric-val mvb">1.76</div>
         </div>
         <div class="metric">
-          <div class="metric-label">R² Score</div>
-          <div class="metric-val mvb">0.90</div>
+          <div class="metric-label">Variance expliquée</div>
+          <div class="metric-val mvb">> 93%</div>
         </div>
-        <div class="prono-note">Bons résultats mais légèrement moins précis que Random Forest.</div>
+        <div class="prono-note">Erreur absolue moyenne réduite — prédictions individuelles fiables.</div>
       </div>
       <div class="prono-card reveal d2">
         <div class="prono-spacer"></div>
-        <div class="prono-model">Régression Linéaire</div>
+        <div class="prono-model">Boosting itératif</div>
         <div class="metric">
-          <div class="metric-label">RMSE — Erreur</div>
-          <div class="metric-val mvr">29.3</div>
+          <div class="metric-label">Dispersion (droite idéale)</div>
+          <div class="metric-val mva">Minimale</div>
         </div>
         <div class="metric">
-          <div class="metric-label">R² Score</div>
-          <div class="metric-val mva">0.75</div>
+          <div class="metric-label">Généralisation</div>
+          <div class="metric-val mva">Excellente</div>
         </div>
-        <div class="prono-note">Moins performante — ne capture pas la complexité des données non-linéaires.</div>
+        <div class="prono-note">Capture les relations non-linéaires complexes entre capteurs industriels bruités.</div>
       </div>
     </div>
 
@@ -739,7 +739,7 @@
         <div class="alert-icon">⚠️</div>
         <div class="alert-title">Durée de Vie Résiduelle Estimée</div>
         <p class="alert-desc">
-          Test sur fichier réel — le modèle Random Forest a analysé les données capteurs
+          Test sur fichier réel — le modèle XGBoost Regressor a analysé les données capteurs
           et prédit la durée de vie résiduelle restante avant défaillance critique.
           Une intervention préventive est recommandée.
         </p>
@@ -778,19 +778,19 @@
       <h3>Bilan du Projet</h3>
       <p>
         Ce projet démontre une approche complète de maintenance conditionnelle basée sur les données capteurs.
-        Avec une disponibilité de <strong>93.62%</strong>, une accuracy de diagnostic de <strong>92.4%</strong>
-        et une prédiction RUL précise (R² = 0.94), le pipeline permet d'anticiper les pannes
+        Avec une disponibilité de <strong>93.62%</strong>, une accuracy de diagnostic de <strong>98%</strong>
+        et une prédiction RUL précise (R² = 0.937), le pipeline XGBoost permet d'anticiper les pannes
         avant qu'elles surviennent — réduisant les coûts de maintenance et les arrêts non planifiés.
       </p>
       <div class="tech-pills">
-        <span class="tech-pill">Kaggle Dataset</span>
+        <span class="tech-pill">Kaggle Dataset · AI4I 2020</span>
         <span class="tech-pill">Python · Scikit-learn</span>
-        <span class="tech-pill">Weibull β=1.8 η=35</span>
+        <span class="tech-pill">Weibull ρ=2.61 λ=487.52</span>
         <span class="tech-pill">MTBF 29.36 · MTTR 2</span>
         <span class="tech-pill">Disponibilité 93.62%</span>
-        <span class="tech-pill">Random Forest 92.4%</span>
-        <span class="tech-pill">MLP · Régression Linéaire</span>
-        <span class="tech-pill">RUL Prediction R²=0.94</span>
+        <span class="tech-pill">Random Forest 98%</span>
+        <span class="tech-pill">XGBoost Regressor</span>
+        <span class="tech-pill">RUL Prediction R²=0.937</span>
       </div>
     </div>
   </div>
